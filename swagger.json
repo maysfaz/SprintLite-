@@ -1,0 +1,535 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "SprintLite API",
+    "description": "API for project management and issue tracking system",
+    "version": "1.0.0",
+    "contact": {
+      "name": "API Support",
+      "email": "support@sprintlite.com"
+    }
+  },
+  "servers": [
+    {
+      "url": "http://localhost:4000/api",
+      "description": "Development server"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Authentication",
+      "description": "User authentication and profile management"
+    },
+    {
+      "name": "Projects",
+      "description": "Project management operations"
+    },
+    {
+      "name": "Sprints",
+      "description": "Sprint management operations"
+    },
+    {
+      "name": "Issues",
+      "description": "Issue tracking and management"
+    },
+    {
+      "name": "Admin",
+      "description": "Administrative operations (admin role required)"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
+    "schemas": {
+      "User": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "description": "User ID"
+          },
+          "name": {
+            "type": "string",
+            "description": "User's full name"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "User's email address"
+          },
+          "role": {
+            "type": "string",
+            "enum": ["member", "manager", "admin"],
+            "description": "User's role"
+          },
+          "bio": {
+            "type": "string",
+            "description": "User's biography"
+          },
+          "avatar": {
+            "type": "string",
+            "description": "URL to user's avatar"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Creation timestamp"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Last update timestamp"
+          }
+        }
+      },
+      "Project": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "description": "Project ID"
+          },
+          "name": {
+            "type": "string",
+            "description": "Project name"
+          },
+          "description": {
+            "type": "string",
+            "description": "Project description"
+          },
+          "createdBy": {
+            "$ref": "#/components/schemas/User"
+          },
+          "members": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/User"
+            },
+            "description": "Project members"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["active", "completed", "archived"],
+            "description": "Project status"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Creation timestamp"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Last update timestamp"
+          }
+        }
+      },
+      "Sprint": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "description": "Sprint ID"
+          },
+          "name": {
+            "type": "string",
+            "description": "Sprint name"
+          },
+          "description": {
+            "type": "string",
+            "description": "Sprint description"
+          },
+          "project": {
+            "$ref": "#/components/schemas/Project"
+          },
+          "createdBy": {
+            "$ref": "#/components/schemas/User"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["planning", "active", "completed"],
+            "description": "Sprint status"
+          },
+          "startDate": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Sprint start date"
+          },
+          "endDate": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Sprint end date"
+          },
+          "goal": {
+            "type": "string",
+            "description": "Sprint goal"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Creation timestamp"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Last update timestamp"
+          }
+        }
+      },
+      "Issue": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "description": "Issue ID"
+          },
+          "title": {
+            "type": "string",
+            "description": "Issue title"
+          },
+          "description": {
+            "type": "string",
+            "description": "Issue description"
+          },
+          "project": {
+            "$ref": "#/components/schemas/Project"
+          },
+          "sprint": {
+            "$ref": "#/components/schemas/Sprint"
+          },
+          "createdBy": {
+            "$ref": "#/components/schemas/User"
+          },
+          "assignedTo": {
+            "$ref": "#/components/schemas/User"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["backlog", "todo", "in-progress", "done"],
+            "description": "Issue status"
+          },
+          "priority": {
+            "type": "string",
+            "enum": ["low", "medium", "high", "urgent"],
+            "description": "Issue priority"
+          },
+          "type": {
+            "type": "string",
+            "enum": ["story", "bug", "task", "epic"],
+            "description": "Issue type"
+          },
+          "storyPoints": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 21,
+            "description": "Story points estimation"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Creation timestamp"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Last update timestamp"
+          }
+        }
+      },
+      "Comment": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "description": "Comment ID"
+          },
+          "content": {
+            "type": "string",
+            "description": "Comment content"
+          },
+          "issue": {
+            "$ref": "#/components/schemas/Issue"
+          },
+          "createdBy": {
+            "$ref": "#/components/schemas/User"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Creation timestamp"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Last update timestamp"
+          }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string",
+            "description": "Error message"
+          }
+        }
+      },
+      "AuthResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "Response message"
+          },
+          "user": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "User ID"
+              },
+              "name": {
+                "type": "string",
+                "description": "User name"
+              },
+              "email": {
+                "type": "string",
+                "format": "email",
+                "description": "User email"
+              },
+              "role": {
+                "type": "string",
+                "enum": ["member", "manager", "admin"],
+                "description": "User role"
+              }
+            }
+          },
+          "token": {
+            "type": "string",
+            "description": "JWT token"
+          }
+        }
+      }
+    },
+    "parameters": {
+      "projectId": {
+        "name": "projectId",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        },
+        "description": "Project ID"
+      },
+      "sprintId": {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        },
+        "description": "Sprint ID"
+      },
+      "issueId": {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        },
+        "description": "Issue ID"
+      },
+      "commentId": {
+        "name": "commentId",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        },
+        "description": "Comment ID"
+      },
+      "userId": {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string"
+        },
+        "description": "User ID"
+      }
+    },
+    "responses": {
+      "UnauthorizedError": {
+        "description": "Authentication token is missing or invalid",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "ForbiddenError": {
+        "description": "User does not have permission to access this resource",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "NotFoundError": {
+        "description": "Resource not found",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "ValidationError": {
+        "description": "Invalid input data",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      }
+    }
+  },
+  "paths": {
+    "/auth/register": {
+      "post": {
+        "tags": ["Authentication"],
+        "summary": "Register a new user",
+        "description": "Creates a new user account with member role by default",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["name", "email", "password"],
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "minLength": 2,
+                    "maxLength": 50
+                  },
+                  "email": {
+                    "type": "string",
+                    "format": "email"
+                  },
+                  "password": {
+                    "type": "string",
+                    "minLength": 6
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "User registered successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Email already registered",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "tags": ["Authentication"],
+        "summary": "Login user",
+        "description": "Authenticates user and returns JWT token",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["email", "password"],
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email"
+                  },
+                  "password": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Login successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid credentials",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
