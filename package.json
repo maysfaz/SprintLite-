@@ -11,7 +11,11 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
+<<<<<<< HEAD
   "description": "",
+=======
+  "description": "Simple Express + Mongoose API with JWT authentication, Joi validation, CORS, and a tiny vanilla JS frontend.",
+>>>>>>> master
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
@@ -27,5 +31,10 @@
   "devDependencies": {
     "dotenv": "^17.2.1",
     "nodemon": "^3.1.10"
+<<<<<<< HEAD
   }
+=======
+  },
+  "type": "commonjs"
+>>>>>>> master
 }

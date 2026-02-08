@@ -49,8 +49,13 @@ router.get('/:id', async (req, res) => {
   }
 });
 
+<<<<<<< HEAD
 // Create project (manager/admin only)
 router.post('/', requireRole(['manager', 'admin']), validate(createProjectSchema), async (req, res) => {
+=======
+// Create project (any authenticated user can create)
+router.post('/', requireRole(['member', 'manager', 'admin']), validate(createProjectSchema), async (req, res) => {
+>>>>>>> master
   try {
     const { name, description, members = [] } = req.body;
 
